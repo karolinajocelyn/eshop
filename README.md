@@ -23,3 +23,19 @@ Setelah menulis unit test, rasanya cukup puas karena bisa memastikan bahwa kode 
 
 Ketika membuat functional test suite baru yang serupa dengan yang sudah ada, penting untuk tetap menjaga kebersihan kode dan menghindari duplikasi. Jika kode baru hanya menyalin struktur dan prosedur tanpa optimasi, maka dapat menyebabkan redundansi yang memperumit pemeliharaan di masa depan. Semakin banyak duplikasi, semakin sulit melakukan perubahan atau perbaikan tanpa memengaruhi beberapa bagian kode sekaligus. Untuk memastikan kode tetap bersih dan berkualitas, perlu diterapkan prinsip DRY (Don't Repeat Yourself) dengan menghindari pengulangan setup, variabel instance, atau logika pengujian yang sama. 
 
+## Reflection 3 - CI/CD & DevOps
+
+1. List the code quality issue(s) that you fixed during the exercise and explain your strategy on fixing them.
+
+Sebelumnya, code coverage pada proyek ini hanya 16% karena kurangnya pengujian unit yang mencakup semua skenario dalam kode. Hal ini terjadi karena beberapa metode tidak memiliki tes yang cukup, terutama pada ProductRepository, ProductServiceImpl, ProductController, dan beberapa bagian lain dari aplikasi. Untuk meningkatkan code coverage hingga 100%, saya melakukan:
+
+- **Menambahkan Unit Test pada ProductRepository** karena beberapa cabang kondisi dalam metode edit() dan delete() tidak diuji dengan baik, sehingga ada branch yang tidak tercover dalam laporan JaCoCo.
+- **Memperbaiki Unit Test pada ProductServiceImpl** karena sebelumnya metode findById(), edit(), dan beberapa metode lain belum diuji.
+- **Menambahkan Unit Test pada ProductController** karena seagian besar metodenya belum diuji.
+- **Menambahkan Unit Test untuk Home Page**
+
+Dengan semua perbaikan ini, code coverage meningkat dari 16% menjadi 100%, memastikan bahwa semua kode diuji dengan baik dan tidak ada bagian kode yang lolos dari pengujian.
+
+2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current implementation has met the definition of Continuous Integration and Continuous Deployment? Explain the reasons (minimum 3 sentences)!
+
+Saat ini, implementasi CI/CD dalam proyek ini sudah cukup baik dalam aspek Continuous Integration (CI), tetapi belum sepenuhnya mendukung Continuous Deployment (CD). Setiap kali ada push atau pull request, pipeline otomatis menjalankan code scanning dengan SonarCloud dan unit test menggunakan JaCoCo, memastikan bahwa setiap perubahan kode diuji sebelum digabungkan ke branch utama. Hal ini membantu menjaga kualitas kode dan mencegah bug masuk ke dalam kode produksi. Namun, dari sisi Continuous Deployment (CD), pipeline masih belum sepenuhnya otomatis karena belum ada langkah build dan deployment ke production atau staging environment. Untuk mencapai Continuous Deployment yang sesungguhnya, perlu ditambahkan automated deployment ke server setelah semua pengujian berhasil.
