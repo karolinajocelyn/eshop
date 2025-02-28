@@ -7,13 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -90,36 +87,28 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void testEditProduct_Success() {
+    void testUpdateProduct_Success() {
         Product updatedProduct = new Product();
         updatedProduct.setProductId("123");
         updatedProduct.setProductName("Updated Product");
         updatedProduct.setProductQuantity(50);
 
-        when(productRepository.findById("123")).thenReturn(product);
+        // Panggil update dengan parameter ID dan objek produk baru
+        productService.update("123", updatedProduct);
 
-        productService.edit(updatedProduct);
-
-        verify(productRepository).findById("123");
-        verify(productRepository).edit(product);
-
-        assertEquals("Updated Product", product.getProductName());
-        assertEquals(50, product.getProductQuantity());
+        verify(productRepository).update("123", updatedProduct);
     }
 
     @Test
-    void testEditProduct_NotFound() {
+    void testUpdateProduct_NotFound() {
         Product updatedProduct = new Product();
         updatedProduct.setProductId("999");
         updatedProduct.setProductName("Nonexistent Product");
         updatedProduct.setProductQuantity(50);
 
-        when(productRepository.findById("999")).thenReturn(null);
+        productService.update("999", updatedProduct);
 
-        productService.edit(updatedProduct);
-
-        verify(productRepository).findById("999");
-        verify(productRepository, never()).edit(any());
+        verify(productRepository).update("999", updatedProduct);
     }
 
     @Test
