@@ -13,17 +13,20 @@
 <div class="container my-4">
     <h2>Edit Product</h2>
 
-    <form th:action="@{/product/edit}" th:object="${product}" method="post">
-        <input type="hidden" th:field="*{productId}"/>
+    <form th:action="@{/product/edit}" method="post">
+        <!-- Pastikan nama field sesuai dengan parameter "Id" di controller -->
+        <input type="hidden" name="id" th:value="${product.productId}" />
 
         <div class="form-group">
             <label for="productName">Product Name</label>
-            <input type="text" id="productName" class="form-control" th:field="*{productName}" required/>
+            <input type="text" id="productName" name="productName" class="form-control"
+                   th:value="${product.productName}" required/>
         </div>
 
         <div class="form-group">
             <label for="productQuantity">Quantity</label>
-            <input type="number" id="productQuantity" class="form-control" th:field="*{productQuantity}" required/>
+            <input type="number" id="productQuantity" name="productQuantity" class="form-control"
+                   th:value="${product.productQuantity}" required/>
         </div>
 
         <button type="submit" class="btn btn-success">Save Changes</button>

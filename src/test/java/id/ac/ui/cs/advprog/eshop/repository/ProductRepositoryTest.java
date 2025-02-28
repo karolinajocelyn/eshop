@@ -85,13 +85,13 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testEdit_ProductExists() {
+    void testUpdate_ProductExists() {
         Product updatedProduct = new Product();
         updatedProduct.setProductId("1");
         updatedProduct.setProductName("Updated Product");
         updatedProduct.setProductQuantity(50);
 
-        productRepository.edit(updatedProduct);
+        productRepository.update("1", updatedProduct);
 
         Product foundProduct = productRepository.findById("1");
         assertNotNull(foundProduct);
@@ -100,18 +100,16 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testEdit_ProductDoesNotExist() {
+    void testUpdate_ProductDoesNotExist() {
         Product nonExistentProduct = new Product();
         nonExistentProduct.setProductId("999");
         nonExistentProduct.setProductName("Nonexistent Product");
         nonExistentProduct.setProductQuantity(50);
 
-        // Simpan jumlah produk sebelum edit
         int beforeSize = countProducts();
 
-        productRepository.edit(nonExistentProduct);
+        productRepository.update("999", nonExistentProduct);
 
-        // Pastikan jumlah produk tetap sama setelah mencoba mengedit produk yang tidak ada
         int afterSize = countProducts();
         assertEquals(beforeSize, afterSize);
     }

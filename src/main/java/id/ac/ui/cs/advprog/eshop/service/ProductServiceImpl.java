@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import id.ac.ui.cs.advprog.eshop.model.Car;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void edit(Product editedProduct) {
-        Product existingProduct = productRepository.findById(editedProduct.getProductId());
-        if (existingProduct != null) {
-            existingProduct.setProductName(editedProduct.getProductName());
-            existingProduct.setProductQuantity(editedProduct.getProductQuantity());
-            productRepository.edit(existingProduct);
-        }
+    public void update(String productId, Product product) {
+        productRepository.update(productId, product);
     }
 
     @Override
