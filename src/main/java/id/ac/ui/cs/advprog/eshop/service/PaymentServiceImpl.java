@@ -1,91 +1,61 @@
-package id.ac.ui.cs.advprog.eshop.model;
+package id.ac.ui.cs.advprog.eshop.service;
 
-import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
+import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import id.ac.ui.cs.advprog.eshop.model.Order;
+import id.ac.ui.cs.advprog.eshop.model.Payment;
+import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
+import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+@Service
+public class PaymentServiceImpl implements PaymentService {
+    @Autowired
+    private PaymentRepository paymentRepository;
 
-public class PaymentTest {
-    private Map<String, String> paymentData;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    @BeforeEach
-    void setUp(){
-        this.paymentData = new HashMap<>();
-
+    @Override
+    public Payment addPayment(Order order, String method, Map<String, String> paymentDetails) {
+        Payment payment = new Payment(order.getId(), method, paymentDetails);
+        paymentRepository.save(payment);
+        return payment;
     }
 
-    @Test
-    void testCreatePaymentDefaultStatus() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData);
-        assertEquals("id-dummy", payment.getId());
-        assertEquals(PaymentMethod.VOUCHER.getValue(), payment.getMethod());
-        assertEquals(PaymentStatus.PENDING.getValue(), payment.getStatus());
-        assertSame(this.paymentData, payment.getPaymentData());
+    @Override
+    public Payment setStatus(Payment payment, String status) {
+        Order order = orderRepository.findById(payment.getId());
+        if (order != null) {
+            if (status.equals("SUCCESS")) {
+                order.setStatus(OrderStatus.SUCCESS.getValue());
+            } else if (status.equals("REJECTED")) {
+                order.setStatus(OrderStatus.FAILED.getValue());
+            } else {
+                throw new IllegalArgumentException();
+            }
+            orderRepository.save(order);
+
+            payment.setStatus(status);
+            paymentRepository.save(payment);
+        } else {
+            throw new NoSuchElementException();
+        }
+        return payment;
     }
 
-    @Test
-    void testCreatePaymentSuccessStatus() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData, "SUCCESS");
-        assertEquals("id-dummy", payment.getId());
-        assertEquals(PaymentMethod.VOUCHER.getValue(), payment.getMethod());
-        assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
-        assertSame(this.paymentData, payment.getPaymentData());
+    @Override
+    public Payment getPayment(String paymentId) {
+        return paymentRepository.findById(paymentId);
     }
 
-    @Test
-    void testCreatePaymentRejectedStatus() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData, PaymentStatus.REJECTED.getValue());
-        assertEquals("id-dummy", payment.getId());
-        assertEquals(PaymentMethod.VOUCHER.getValue(), payment.getMethod());
-        assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
-        assertSame(this.paymentData, payment.getPaymentData());
+    @Override
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
     }
-
-    @Test
-    void testCreatePaymentInvalidStatus() {
-        assertThrows (IllegalArgumentException.class, () -> {
-            Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData, "INVALID");
-        });
-    }
-
-    @Test
-    void testSetPaymentToDataEmpty() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData);
-        this.paymentData.clear();
-        assertThrows (IllegalArgumentException.class, () -> {
-            payment.setPaymentData(this.paymentData);
-        });
-    }
-
-    @Test
-    void testSetPaymentDataToStatusSuccess() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData);
-        this.paymentData.put("voucherCode", "ESHOP1234ABC5678");
-        payment.setPaymentData(this.paymentData);
-        assertSame(this.paymentData, payment.getPaymentData());
-    }
-
-    @Test
-    void testCreatePaymentMethodVoucher() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.VOUCHER.getValue(), this.paymentData);
-        assertEquals("id-dummy", payment.getId());
-        assertEquals(PaymentMethod.VOUCHER.getValue(), payment.getMethod());
-        assertEquals(PaymentStatus.PENDING.getValue(), payment.getStatus());
-        assertSame(this.paymentData, payment.getPaymentData());
-    }
-
-    @Test
-    void testCreatePaymentMethodBankTransfer() {
-        Payment payment = new Payment("id-dummy", PaymentMethod.BANK_TRANSFER.getValue(), this.paymentData);
-        assertEquals("id-dummy", payment.getId());
-        assertEquals(PaymentMethod.BANK_TRANSFER.getValue(), payment.getMethod());
-        assertEquals(PaymentStatus.PENDING.getValue(), payment.getStatus());
-        assertSame(this.paymentData, payment.getPaymentData());
-    }
-
 }
