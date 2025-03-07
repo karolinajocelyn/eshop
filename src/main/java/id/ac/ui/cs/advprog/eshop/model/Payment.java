@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,77 +8,37 @@ import java.util.Map;
 
 @Getter
 public class Payment {
-    private String id;
-    private Order order;
-    private String method;
-    @Setter
-    private String status;
-    private Map<String, String> paymentData;
+    String id;
+    String method;
+    String status;
+    Map<String, String> paymentData;
 
-
-    public Payment(String id, Order order, String method, Map<String, String> paymentData) {
+    public Payment(String id, String method, Map<String, String> paymentData) {
         this.id = id;
-        this.order = order;
         this.method = method;
         this.paymentData = paymentData;
-        this.status = "WAITING";
+        this.status = PaymentStatus.PENDING.getValue();
     }
 
-    public Payment(String id, Order order, String method, Map<String, String> paymentData, String status) {
-        this.id = id;
-        this.order = order;
-        this.method = method;
-        this.paymentData = paymentData;
-        this.status = status;
+    public Payment (String id, String method, Map <String, String> paymentData, String status) {
+        this(id, method, paymentData);
+        this.setStatus(status);
     }
 
-    public void validateAndSetStatus() {
-        if ("VOUCHER".equals(this.method)) {
-            validateVoucherPayment();
-        } else if ("BANK_TRANSFER".equals(this.method)) {
-            validateBankTransferPayment();
+    public void setStatus(String status) {
+        if (PaymentStatus.contains(status)) {
+            this.status = status;
         } else {
-            throw new IllegalArgumentException("Unsupported payment method: " + this.method);
+            throw new IllegalArgumentException();
         }
     }
 
-    private void validateVoucherPayment() {
-        String voucherCode = this.paymentData.get("voucherCode");
-
-        this.status = "REJECTED";
-
-        if (voucherCode == null || voucherCode.length() != 16) {
-            return;
+    public void setPaymentData(Map<String, String> paymentData) {
+        if (paymentData.isEmpty()) {
+            throw new IllegalArgumentException();
+        } else {
+            this.paymentData = paymentData;
         }
-
-        if (!voucherCode.startsWith("ESHOP")) {
-            return;
-        }
-
-        int digitCount = 0;
-        for (char c : voucherCode.toCharArray()) {
-            if (Character.isDigit(c)) {
-                digitCount++;
-            }
-        }
-
-        if (digitCount != 8) {
-            return;
-        }
-
-        this.status = "SUCCESS";
     }
 
-    private void validateBankTransferPayment() {
-        String bankName = this.paymentData.get("bankName");
-        String referenceCode = this.paymentData.get("referenceCode");
-
-        if (bankName == null || bankName.isEmpty() ||
-                referenceCode == null || referenceCode.isEmpty()) {
-            this.status = "REJECTED";
-            return;
-        }
-
-        this.status = "SUCCESS";
-    }
 }
