@@ -64,3 +64,20 @@ Saat ini, implementasi CI/CD dalam proyek ini sudah cukup baik dalam aspek Conti
 - Jika tidak menerapkan prinsip Open/Closed, maka untuk menambahkan jenis produk seperti Book, kita harus mengubah ProductRepository atau bahkan ProductController, yang berisiko menimbulkan bug di bagian lain.
 - Jika ProductController langsung bergantung pada ProductRepository, maka kita tidak bisa mengganti penyimpanan data dengan cara lain, seperti mengganti database atau menggunakan caching, tanpa memodifikasi controller secara langsung. Hal ini bertentangan dengan prinsip Dependency Inversion dan membuat sistem sulit berkembang.
 
+## Reflection 5 - TDD & Refactoring
+
+1. Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.
+
+Dalam penerapan Test-Driven Development (TDD) pada latihan ini, saya merefleksikan beberapa aspek berdasarkan pertanyaan reflektif dari Percival (2017). Secara umum, TDD membantu memastikan bahwa kode yang ditulis benar-benar memenuhi kebutuhan yang diharapkan, karena pengujian dibuat sebelum implementasi. Selain itu, proses ini juga mempermudah deteksi kesalahan sejak awal, sehingga mengurangi kemungkinan bug tersembunyi di kemudian hari. Dengan menulis tes terlebih dahulu, saya merasa lebih fokus dalam mendesain kode yang modular dan lebih mudah diuji.
+
+Namun, ada beberapa tantangan dalam penerapan TDD yang perlu diperbaiki di masa mendatang. Salah satunya adalah memastikan cakupan pengujian yang lebih luas, terutama untuk edge cases yang mungkin terlewat. Selain itu, saya perlu lebih disiplin dalam menulis tes yang tidak hanya menguji skenario umum, tetapi juga skenario ekstrem yang bisa terjadi di dunia nyata. Ke depannya, saya juga ingin lebih menyeimbangkan antara menulis tes yang cukup spesifik tanpa menghambat fleksibilitas kode dalam jangka panjang.
+
+2. You have created unit tests in Tutorial. Now reflect whether your tests have successfully followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you create more tests.
+
+Berdasarkan prinsip F.I.R.S.T. (Fast, Independent, Repeatable, Self-Validating, and Timely), saya merefleksikan bahwa unit test yang saya buat telah memenuhi sebagian besar prinsip tersebut. Tes berjalan cepat karena menggunakan mocking pada dependensi, memastikan bahwa pengujian tidak bergantung pada database atau jaringan. Selain itu, tes bersifat independen, dengan setiap skenario memiliki data uji sendiri tanpa ketergantungan pada hasil tes lain. Tes juga repeatable, karena dengan kondisi awal yang sama, hasil pengujian akan selalu konsisten.
+
+Namun, ada beberapa aspek yang bisa diperbaiki.
+- Beberapa exception handling tests menggunakan assertThrows, tetapi belum memverifikasi pesan error yang muncul. Hal ini melanggar prinsip Self-Validating sehingga sebaiknya menambahkan pemeriksaan/validasi yang lebih spesifik.
+- Beberapa tes menggunakan objek yang sama (misalnya Order atau Payment) yang bisa terpengaruh oleh perubahan status dalam tes lain. Hal ini melanggar prinsip Independent, sebaiknya dibuat instance baru dalam setiap metode @Test, atau pastikan data diuji dalam keadaan clean setiap kali dijalankan.
+- Beberapa tes menggunakan nilai hardcoded yang bisa berubah seiring pengembangan. Sebaiknya, menggunakan constant variables atau test data factory agar tidak perlu mengganti nilai secara manual saat kode diperbarui agar data testing konsisten (Repeatable).
+- Beberapa tes masih menggunakan pengolahan data secara langsung, padahal bisa dipercepat dengan Mockito untuk mencegah eksekusi yang tidak perlu agar lebih optimal (Fast).
