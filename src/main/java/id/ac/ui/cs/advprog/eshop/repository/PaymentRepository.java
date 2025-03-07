@@ -1,49 +1,24 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
 public class PaymentRepository {
-    private List<Payment> paymentData = new ArrayList<>();
+    private Map<String, Payment> payments;
 
-    public Payment save(Payment payment) {
-        int i = 0;
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getId().equals(payment.getId())) {
-                paymentData.remove(i);
-                paymentData.add(i, payment);
-                return payment;
-            }
-            i++;
-        }
-        paymentData.add(payment);
-        return payment;
+    public PaymentRepository() {
+        this.payments = new HashMap<>();
     }
 
-    public Payment findById(String id) {
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getId().equals(id)) {
-                return savedPayment;
-            }
-        }
-        return null;
-    }
+    public Payment findById(String id) {return null;}
 
-    public List<Payment> findAll() {
-        return new ArrayList<>(paymentData);
-    }
+    public Payment save(Payment payment) {return null;}
 
-    public List<Payment> findByOrderId(String orderId) {
-        List<Payment> result = new ArrayList<>();
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getOrder().getId().equals(orderId)) {
-                result.add(savedPayment);
-            }
-        }
-        return result;
-    }
+    public List<Payment> findAll() {return null;}
+
+    public List<Payment> findByOrderId(String orderId) {return null;}
 }
