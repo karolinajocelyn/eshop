@@ -64,7 +64,7 @@ Saat ini, implementasi CI/CD dalam proyek ini sudah cukup baik dalam aspek Conti
 - Jika tidak menerapkan prinsip Open/Closed, maka untuk menambahkan jenis produk seperti Book, kita harus mengubah ProductRepository atau bahkan ProductController, yang berisiko menimbulkan bug di bagian lain.
 - Jika ProductController langsung bergantung pada ProductRepository, maka kita tidak bisa mengganti penyimpanan data dengan cara lain, seperti mengganti database atau menggunakan caching, tanpa memodifikasi controller secara langsung. Hal ini bertentangan dengan prinsip Dependency Inversion dan membuat sistem sulit berkembang.
 
-## Reflection 5 -
+## Reflection 5 - TDD & Refactoring
 
 1. Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.
 
